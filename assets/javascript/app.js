@@ -14,7 +14,9 @@ firebase.initializeApp(config);
 var database = firebase.database();
 
 //store data
-$("#add-train-btn").on("click", function(event) {
+$("#add-train-btn").on("click", addToDatabase);
+
+function addToDatabase() {
 	event.preventDefault();
 
 	//get form input
@@ -23,7 +25,7 @@ $("#add-train-btn").on("click", function(event) {
 	var firstTrain = $("#first-train").val().trim();
 	var freq = $("#frequency").val().trim();
 
-	//temp object w trainData
+	//temp trainData
 	var newTrain = {
 		trainName: trainName,
 		destination: destination,
@@ -40,10 +42,42 @@ $("#add-train-btn").on("click", function(event) {
 	$("#destination").val("");
 	$("#first-train").val("");
 	$("#frequency").val("");
+};
+
+
+//database to html
+database.ref().on("child_added", function(snapshot, prevChildKey) {
+
+
+	//console.log(snapshot.val());
+
+	var trainName = snapshot.val().trainName;
+	var destination = snapshot.val().destination;
+	var firstTrain = snapshot.val().firstTrain;
+	var freq = snapshot.val().freq; 
+
+	//var remAndNext = trainLogic(firstTrain, freq);	
+	var nextArrival = "00:00"; //remAndNext[1];
+	var remainder = 3; //remAndNext[0];
+
+	//format time
+	// if (nextArrival[0] <= 12) {
+	// 	nextArrival = nextArrival[0] + ":" + nextArrival[1] + " AM";
+	// }
+	// else {
+	// 	nextArrival = nextArrival[1]-12 + ":" + nextArrival[1] + " PM";
+	// };
+	moment(nextArrival).format("hh:mm:ss A");
+
+	//add to table
+	$("#train-schedule-table > tbody").append("<tr><td>" + trainName + "</td>" +
+												"<td>" + destination + "</td>" +
+												"<td>" + freq + "</td>" +
+												"<td>" + nextArrival + "</td>" +
+												"<td>" + remainder + "</td></tr>");
+
+
 });
-
-
-
 
 
 //next train time
@@ -55,7 +89,7 @@ function trainLogic(first, freq) {
 	var currentTimeInMin = currentTime[0]*60 + currentTime[1];
 	var firstInMin = first[0]*60 + first[1];
 	var remainder = 0;
-	var nextArival = currentTime;
+	var nextArrival = currentTime;
 
 	//find remainder
 	if (firstInMin > currentTimeInMin) {
@@ -71,16 +105,16 @@ function trainLogic(first, freq) {
 	}
 	else if (firstInMin < currentTimeInMin){
 		remainder = (currentTimeInMin + 24*60 - firstInMin) % freq;
-		nextArival = [currentTime[0], currentTime[1]+(freq - remainder)];
+		nextArrival = [currentTime[0], currentTime[1]+(freq - remainder)];
 	};
 
-	return [remainder, nextArival];
-};
+	return [remainder, nextArrival];
+}; 
 
 
 
 
 
-})
+}); 
 
 
