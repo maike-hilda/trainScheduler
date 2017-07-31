@@ -1,5 +1,8 @@
-.blue {
+.panel-heading {
 	background-color: #337ab7;
 	color: #ffffff;
 }
 
+th {
+	font-weight: bold;
+}
