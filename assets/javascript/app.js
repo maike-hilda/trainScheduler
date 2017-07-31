@@ -112,7 +112,7 @@ function trainLogic(firstTrain, freq) {
 	}
 	// no change if firstTrainMin === currentTrainMin
 
-	var nextArrivalMin = currentTime[0] + remainder;
+	var nextArrivalMin = currentTime[1] + remainder;
 	var freqMinusRem = freq - remainder;
 
 	if (remainder === 0) {
